@@ -147,29 +147,34 @@ void solve()
     // white 0 .
     // black 1 #
     vector<vector<int>> arr(n, vector<int>(m));
+    queue<pair<int,int>> q;
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < m; j++)
         {
             char c;
             cin >> c;
-            if (c == '.')
-                arr[i][j] = 0;
-            else
-                arr[i][j] = 1;
+            if (c == '.') arr[i][j] = 0;
+            else arr[i][j] = 1;
+
+            if(arr[i][j] == 1) {
+                q.push({i,j});
+            }
         }
     }
 
-    vector<vector<int>> nc(n, vector<int>(m, 0)); // i,j has how many black neighborus
-
+      
     vector<pair<int, int>> dd = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+    
+
+    vector<vector<vector<pair<int,int>>>> ngs(n,vector<vector<pair<int,int>>>(m));
 
     function<vector<pair<int, int>>(int, int)> get_neigh = [&](int i, int j) -> vector<pair<int, int>>
     {
         vector<pair<int, int>> neghs;
         for (auto a : dd)
         {
-
+            
             int x = i + a.first;
             int y = j + a.second;
 
@@ -183,85 +188,68 @@ void solve()
                 continue;
             }
         }
-
+        
         return neghs;
     };
+    
+    for(int i = 0 ; i < n ; i++) {
+        for(int j = 0 ; j < m ; j++) {
+            ngs[i][j] = get_neigh(i,j);
+        }
+    }
 
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < m; j++)
-        {
-            vector<pair<int, int>> neigh = get_neigh(i, j);
+    // insert black => pop then and increment the count of the black neighbours of their neighbours
+    // at last when all are popped ==> then check in these added neigbours kinke number of black numbers 1 hai unko daalo queue me 
+    
+    vector<vector<int>> nc(n, vector<int>(m, 0)); 
+   
+    if(q.size() == 0 ) {
+        cout<<0<<"\n";
+        return ; // none will be turned black 
+    }
 
-            for (auto a : neigh)
-            {
-                if (arr[a.first][a.second] == 1)
-                    nc[i][j] += 1;
+    int netx_version = q.size();
+
+
+    while(netx_version > 0) {
+
+        set<pair<int,int>> procs;
+
+        while(!q.empty()) {
+            int x = q.front().first;
+            int y = q.front().second;
+
+            q.pop();
+            
+            for(auto a : ngs[x][y]) {
+                nc[a.first][a.second] += 1;
+                procs.insert(a);
             }
         }
-    }
 
-    queue<pair<int, int>> q;
-    vector<vector<int>> vis(n, vector<int>(m, 0));
-
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < m; j++)
-        {
-            if (arr[i][j] == 1)
-                q.push({i, j});
-            vis[i][j] = 1;
-        }
-    }
-
-    while (!q.empty())
-    {
-        int x = q.front().first;
-        int y = q.front().second;
-
-        arr[x][y] = 1;
-        vector<pair<int, int>> in = get_neigh(x, y);
-
-        for (auto x : in)
-        {
-            if (arr[x.first][x.second] == 0)
-            {
-                nc[x.first][x.second] += 1;
+        for(auto a : procs) {
+            if(nc[a.first][a.second] == 1) {
+                q.push(a);
+                arr[a.first][a.second] = 1;
             }
         }
-        q.pop();
 
-        vector<pair<int, int>> ngs = get_neigh(x, y);
+        netx_version = q.size();
+    }
 
-        for (auto a : ngs)
-        {
-            // cout<<" x,y : "<<a.first<<","<<a.second<<"\n";
-            vis[a.first][a.second] = 1;
 
-            if (arr[a.first][a.second] == 0)
-            {
-                // initially white
-                // check numebr of neighbour
-                if (nc[a.first][a.second] == 1)
-                {
-
-                    q.push(a);
-                }
-            }
+    int cnt = 0;
+    for(auto a : arr) {
+        for(auto b : a) {
+            if(b == 1) cnt++;
         }
     }
 
-    int ans = 0;
-    for (auto a : arr)
-    {
-        printarr(a);
-        for (auto b : a)
-        {
-            if (b == 1)
-                ans++;
-        }
-    }
-    cout << ans << "\n";
+    cout<<cnt<<"\n";
+
+
+
+
 }
 
 // Main Function

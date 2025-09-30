@@ -1,0 +1,6 @@
+# Learnings
+
+| Problem Link | Learning |
+|-------------|----------|
+| https://codeforces.com/problemset/problem/2132/C2 |  we can see cost to buy 27 is > buying 9 watermelons 3 times  ==> this scenarions gives even higher profits on decomposing higher power of 3 to lower powers like 81 -> 3 * 27 si more proftable then 27 -> 3 * 9 ==> decome the largest values ==> first generate the minimum number of transaction needed then decomes the size of exchnges by 3 untill size becomes just below k then that config will be lowest cost with transactions <= k   |
+|  https://codeforces.com/problemset/problem/1850/H   |  how to make a independent node => dependent ==> JUST REVERSE the Edge and mek it dependent the main idea here was to from each independent node propogate relatve distance and for a same independent node ( same variable ) if you get diatcnes on a node like x+100 and again x+50 ==> relative position is colliding hence the ordering can't be made else if all has one unique disance then achievebale see solution main learning ==>```how to make a independent node => dependent ==> JUST REVERSE the Edge``` |
